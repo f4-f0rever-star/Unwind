@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import bcrypt
 import jwt
 from . import db
-from ..models import User
+from models import User
 
 bp = Blueprint("auth", __name__, url_prefix="/api")
 

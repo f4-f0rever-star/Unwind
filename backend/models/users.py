@@ -1,6 +1,6 @@
 from datetime import datetime
 import bcrypt 
-from . import db
+from app import db
 
 class User(db.Model):
     __tablename__ = "user"

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
 from . import db
-from ..models import Task
+from models import Task
 from .auth import require_auth
 
 bp = Blueprint("tasks", __name__, url_prefix="/api")
