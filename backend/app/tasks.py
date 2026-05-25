@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
-from app import db
-from models import Task
+from . import db
+from ..models import Task
 from .auth import require_auth
 
-bp= Blueprint("tasks", __name__, url_prefix="/api")
+bp = Blueprint("tasks", __name__, url_prefix="/api")
 
 @bp.route("/tasks", methods=["GET"])
 @require_auth
@@ -12,7 +12,7 @@ def get_tasks():
     user_id = request.user_id
     date_str = request.args.get("date")
     from_date = request.args.get("from")
-    to_date = request.get.args.get("to")
+    to_date = request.args.get("to")
 
     query = Task.query.filter_by(user_id=user_id)
 
@@ -43,7 +43,7 @@ def get_tasks():
         "id": t.id,
         "title": t.title,
         "done": t.done,
-        "created_at": t.created_atstrftime("%Y-%m-%d %H:%M")
+        "created_at": t.created_at.strftime("%Y-%m-%d %H:%M")
     } for t in tasks])
 
 @bp.route("/tasks", methods=["POST"])

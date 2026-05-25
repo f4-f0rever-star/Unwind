@@ -24,12 +24,12 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    from app import auth
-    from app import tasks
-    from app import moods
-    from app import reminders
-    from app import mindfulness
-    from app import articles
+    from . import auth
+    from . import tasks
+    from . import moods
+    from . import reminders
+    from . import mindfulness
+    from . import articles
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(tasks.bp)

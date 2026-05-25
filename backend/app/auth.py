@@ -1,18 +1,19 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime, timedelta
 import bcrypt
 import jwt
-from app import db
-from models import User
+from . import db
+from ..models import User
 
-bp = Blueprint("auth", __name__, url_prefix="api")
+bp = Blueprint("auth", __name__, url_prefix="/api")
+
 
 def require_auth(f):
     from functools import wraps
     @wraps(f)
     def decorated(*args, **kwargs):
         auth_header = request.headers.get("Authorization", "")
-        token = auth_header.replace("Bearer", "") if auth_header.startswith("Bearer") else auth_header
+        token = auth_header.replace("Bearer ", "") if auth_header.startswith("Bearer ") else auth_header
 
         if not token:
             return jsonify({"error": "Token required"}), 401
@@ -28,7 +29,6 @@ def require_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-from flask import current_app
 
 @bp.route("/register", methods=["POST"])
 def register():
@@ -69,6 +69,7 @@ def register():
         "token": token
     }), 201
 
+
 @bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -76,14 +77,14 @@ def login():
     password = data.get("password")
 
     if not username or not password:
-        return jsonify({"error": "Username and password required"}), 401
+        return jsonify({"error": "Username and password required"}), 400
     
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({"error": "Invalid credentials"}), 401
     
     if not user.check_password(password):
-        return jsonify({"error": "Invalid credentials"}), 402
+        return jsonify({"error": "Invalid credentials"}), 401
     
     token = jwt.encode(
         {
