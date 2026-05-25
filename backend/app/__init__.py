@@ -12,17 +12,26 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-        'DATABASE_URL', 
+        'DATABASE_URL',
         'postgresql://postgres:postgres@localhost:5432/unwind'
     )
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+
+    app.config['SECRET_KEY'] = os.getenv(
+        'SECRET_KEY',
+        'dev-secret-key-change-in-production'
+    )
 
     db.init_app(app)
-    CORS(app, origins=os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(','))
 
-    with app.app_context():
-        db.create_all()
+    CORS(
+        app,
+        origins=os.getenv(
+            'CORS_ORIGINS',
+            'http://localhost:3000'
+        ).split(',')
+    )
 
     from . import auth
     from . import tasks
@@ -37,5 +46,8 @@ def create_app():
     app.register_blueprint(reminders.bp)
     app.register_blueprint(mindfulness.bp)
     app.register_blueprint(articles.bp)
+
+    with app.app_context():
+        db.create_all()
 
     return app
