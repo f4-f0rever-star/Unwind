@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from app import db
-from models import Reminder
+from . import db
+from ..models import Reminder
 from .auth import require_auth
 
 bp = Blueprint("reminders", __name__, url_prefix="/api")
@@ -44,7 +44,7 @@ def toggle_reminder(reminder_id):
     data = request.get_json()
     reminder = Reminder.query.get_or_404(reminder_id)
     if reminder.user_id != request.user_id:
-        return jsonify({"error": "Not authorized"})
+        return jsonify({"error": "Not authorized"}), 403
     reminder.active = data.get("active", not reminder.active)
     db.session.commit()
     return jsonify({
