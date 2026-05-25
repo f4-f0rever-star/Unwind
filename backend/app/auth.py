@@ -90,7 +90,7 @@ def login():
             "user_id": user.id,
             "username": user.username,
             "exp": datetime.utcnow() + timedelta(days=7)
-        }
+        },
         current_app.config["SECRET_KEY"],
         algorithm="HS256"
     )
