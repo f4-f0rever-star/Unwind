@@ -1,62 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from 'react';
+import AuthScreen from './components/AuthScreen.jsx';
+import Shell from './components/Shell.jsx';
+import HomePage from './pages/HomePage.jsx';
+import TasksPage from './pages/TasksPage.jsx';
+import MoodsPage from './pages/MoodsPage.jsx';
+import MindfulnessPage from './pages/MindfulnessPage.jsx';
+import ArticlesPage from './pages/ArticlesPage.jsx';
+import RemindersPage from './pages/RemindersPage.jsx';
 
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Tasks from "./pages/Tasks";
-import Mindfulness from "./pages/Mindfulness";
-import Journal from "./pages/Journal";
-import Profile from "./pages/Profile";
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [page, setPage] = useState('home');
 
-import BottomNav from "./components/BottomNav";
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
 
-function App() {
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  const handleAuthSuccess = (authUser, token) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(authUser));
+    setUser(authUser);
+    setPage('home');
+  };
 
-  const [username, setUsername] = useState("");
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setPage('home');
+  };
 
-  const [page, setPage] = useState("home");
-
-  if (!loggedIn) {
-
-    return (
-      <Login
-        setLoggedIn={setLoggedIn}
-        setUsername={setUsername}
-      />
-    );
-
+  if (!user) {
+    return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
   }
 
   return (
-
-    <div className="app">
-
-      {page === "home" &&
-        <Home username={username} />
-      }
-
-      {page === "tasks" &&
-        <Tasks />
-      }
-
-      {page === "mindfulness" &&
-        <Mindfulness />
-      }
-
-      {page === "journal" &&
-        <Journal />
-      }
-
-      {page === "profile" &&
-        <Profile username={username} />
-      }
-
-      <BottomNav setPage={setPage} />
-
-    </div>
-
+    <Shell user={user} page={page} setPage={setPage} onLogout={handleLogout}>
+      {page === 'home' && <HomePage user={user} setPage={setPage} />}
+      {page === 'tasks' && <TasksPage />}
+      {page === 'moods' && <MoodsPage />}
+      {page === 'mindfulness' && <MindfulnessPage />}
+      {page === 'articles' && <ArticlesPage />}
+      {page === 'reminders' && <RemindersPage />}
+    </Shell>
   );
 }
-
-export default App;
