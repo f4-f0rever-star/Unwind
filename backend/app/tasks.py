@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from . import db
-from app.models import Task
+from app import db
+from models import Task
 from .auth import require_auth
 
 bp= Blueprint("tasks", __name__, url_prefix="/api")

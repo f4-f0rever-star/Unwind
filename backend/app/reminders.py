@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from . import db
-from app.models import Reminder
+from app import db
+from models import Reminder
 from .auth import require_auth
 
 bp = Blueprint("reminders", __name__, url_prefix="/api")
