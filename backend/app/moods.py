@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from . import db
-from app.models import Mood
+from app import db
+from models import Mood
 from .auth import require_auth
 
 bp = Blueprint("moods", __name__, url_prefix="/api")

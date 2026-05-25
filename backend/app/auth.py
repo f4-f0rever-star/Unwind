@@ -2,8 +2,8 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
 import bcrypt
 import jwt
-from . import db
-from app.models import User
+from app import db
+from models import User
 
 bp = Blueprint("auth", __name__, url_prefix="api")
 
