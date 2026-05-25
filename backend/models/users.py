@@ -13,13 +13,13 @@ class User(db.Model):
 
     def password(self, password):
         salt = bcrypt.gensalt()
-        self.password_hash = bcrypt.hashpassword(password.encode("utf-8"), salt).decode("utf-8")
+        self.password_hash = bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
     def check_password(self, password):
-        return bcrypt.checkpassword(password.encode("utf-8"), self.password_hash.encode("utf-8"))
+        return bcrypt.checkpw(password.encode("utf-8"), self.password_hash.encode("utf-8"))
     
     def to_dict(self):
-        return{
+        return {
             "id": self.id,
             "username": self.username,
             "email": self.email,

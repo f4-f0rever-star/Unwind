@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
-from app import db
-from models import Mood
+from . import db
+from ..models import Mood
 from .auth import require_auth
 
 bp = Blueprint("moods", __name__, url_prefix="/api")

@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*Spy.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env*.db
+unwind.db
+.DS_Store
+node_modules.env
