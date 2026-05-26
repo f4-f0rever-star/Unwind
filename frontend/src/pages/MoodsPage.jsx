@@ -13,15 +13,23 @@ export default function MoodsPage() {
   const [entries, setEntries] = useState([]);
   const [selectedMood, setSelectedMood] = useState(null);
   const [note, setNote] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   const fetchMoods = async () => {
     setLoading(true);
+
     try {
       const data = await apiRequest('/api/moods');
-      setEntries(Array.isArray(data) ? data : []);
+
+      if (Array.isArray(data)) {
+        setEntries(data);
+      } else {
+        setEntries([]);
+      }
     } catch (err) {
       console.error(err);
+      setMessage(err.message);
     } finally {
       setLoading(false);
     }
@@ -34,22 +42,36 @@ export default function MoodsPage() {
   const saveMood = async () => {
     if (!selectedMood) return;
 
-    await apiRequest('/api/moods', {
-      method: 'POST',
-      body: JSON.stringify({ mood: selectedMood, note }),
-    });
+    try {
+      await apiRequest('/api/moods', {
+        method: 'POST',
+        body: JSON.stringify({
+          mood: selectedMood,
+          note,
+        }),
+      });
 
-    setSelectedMood(null);
-    setNote('');
-    fetchMoods();
+      setMessage('Mood saved successfully 💜');
+      setSelectedMood(null);
+      setNote('');
+
+      fetchMoods();
+    } catch (err) {
+      console.error(err);
+      setMessage(err.message);
+    }
   };
 
   return (
     <div className="page-stack">
       <section className="page-header">
         <span className="eyebrow">Mood Journal</span>
-        <h2>How are you arriving today?</h2>
-        <p>Choose a mood and leave a short note. No pressure to explain everything.</p>
+
+        <h2>How are you feeling today?</h2>
+
+        <p>
+          Track your emotional patterns and leave small notes for yourself.
+        </p>
       </section>
 
       <section className="panel">
@@ -57,8 +79,12 @@ export default function MoodsPage() {
           {moods.map(([value, label]) => (
             <button
               key={value}
-              className={`mood-card ${selectedMood === Number(value) ? 'selected' : ''}`}
-              onClick={() => setSelectedMood(Number(value))}
+              className={`mood-card ${
+                selectedMood === parseInt(value)
+                  ? 'selected'
+                  : ''
+              }`}
+              onClick={() => setSelectedMood(parseInt(value))}
             >
               <strong>{value}</strong>
               <span>{label}</span>
@@ -67,29 +93,56 @@ export default function MoodsPage() {
         </div>
 
         <textarea
-          placeholder="Add a note..."
+          placeholder="Write a small note..."
+          rows="4"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          rows="4"
         />
 
-        <button className="primary-btn" onClick={saveMood} disabled={!selectedMood}>
+        <button
+          className="primary-btn"
+          onClick={saveMood}
+          disabled={!selectedMood}
+        >
           Save Mood
         </button>
+
+        {message && (
+          <div className="notice success">
+            {message}
+          </div>
+        )}
       </section>
 
       <section className="panel">
-        <h3>Past Entries</h3>
+        <h3>Previous Entries</h3>
 
-        {loading && <p className="muted">Loading...</p>}
-        {!loading && entries.length === 0 && <p className="muted">No mood entries yet.</p>}
+        {loading && (
+          <p className="muted">
+            Loading moods...
+          </p>
+        )}
+
+        {!loading && entries.length === 0 && (
+          <p className="muted">
+            No mood entries yet.
+          </p>
+        )}
 
         <div className="list-stack">
           {entries.map((entry) => (
             <div key={entry.id} className="entry-row">
-              <strong>{moods[entry.mood - 1]?.[1] || 'Mood'}</strong>
-              <p>{entry.note || 'No note'}</p>
-              <small>{entry.created_at}</small>
+              <strong>
+                {moods[entry.mood - 1]?.[1] || 'Mood'}
+              </strong>
+
+              <p>
+                {entry.note || 'No note added'}
+              </p>
+
+              <small>
+                {entry.created_at}
+              </small>
             </div>
           ))}
         </div>
