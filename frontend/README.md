@@ -1,4 +1,4 @@
-# 🌿 Unwind Frontend
+#  Unwind Frontend
 
 The **Unwind Frontend** is a modern React-based interface designed to deliver a calm, minimal, and emotionally supportive user experience. It connects to a Flask backend API to power mood tracking, articles, and self-care features.
 
