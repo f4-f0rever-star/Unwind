@@ -1,33 +1,20 @@
-<<<<<<< HEAD
 from flask import Blueprint, request, jsonify, current_app
-=======
-from flask import Blueprint, request, jsonify
->>>>>>> unwind-elevated
 from datetime import datetime, timedelta
 import bcrypt
 import jwt
 from . import db
-<<<<<<< HEAD
-from models import User
+from models import User  
 
 bp = Blueprint("auth", __name__, url_prefix="/api")
 
-=======
-from app.models import User
-
-bp = Blueprint("auth", __name__, url_prefix="api")
->>>>>>> unwind-elevated
 
 def require_auth(f):
     from functools import wraps
+
     @wraps(f)
     def decorated(*args, **kwargs):
         auth_header = request.headers.get("Authorization", "")
-<<<<<<< HEAD
         token = auth_header.replace("Bearer ", "") if auth_header.startswith("Bearer ") else auth_header
-=======
-        token = auth_header.replace("Bearer", "") if auth_header.startswith("Bearer") else auth_header
->>>>>>> unwind-elevated
 
         if not token:
             return jsonify({"error": "Token required"}), 401
@@ -41,16 +28,13 @@ def require_auth(f):
             return jsonify({"error": "Invalid token"}), 401
         
         return f(*args, **kwargs)
+
     return decorated
 
-<<<<<<< HEAD
-=======
-from flask import current_app
->>>>>>> unwind-elevated
 
 @bp.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
@@ -87,44 +71,29 @@ def register():
         "token": token
     }), 201
 
-<<<<<<< HEAD
 
-=======
->>>>>>> unwind-elevated
 @bp.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get("username")
     password = data.get("password")
 
     if not username or not password:
-<<<<<<< HEAD
         return jsonify({"error": "Username and password required"}), 400
-=======
-        return jsonify({"error": "Username and password required"}), 401
->>>>>>> unwind-elevated
     
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({"error": "Invalid credentials"}), 401
     
     if not user.check_password(password):
-<<<<<<< HEAD
         return jsonify({"error": "Invalid credentials"}), 401
-=======
-        return jsonify({"error": "Invalid credentials"}), 402
->>>>>>> unwind-elevated
     
     token = jwt.encode(
         {
             "user_id": user.id,
             "username": user.username,
             "exp": datetime.utcnow() + timedelta(days=7)
-<<<<<<< HEAD
         },
-=======
-        }
->>>>>>> unwind-elevated
         current_app.config["SECRET_KEY"],
         algorithm="HS256"
     )
